@@ -1,0 +1,101 @@
+import java.util.Scanner;
+public class bellmanford
+{
+public int distance[];    // distance array
+public int numb_vert;   // number of vertices 
+public static final int MAX_VALUE=999;  //represent infinity or an unreachable value 
+
+public bellmanford(int numb_vert)     // Constructor
+{
+    this.numb_vert = numb_vert;   // initializing the number of vertices 
+   distance = new int[numb_vert+1];  allocating memory for the distance array based on the number of vertices.
+}
+
+ /* implements the core logic of the Bellman-Ford algorithm for finding the shortest paths from a given source vertex to all other vertices in a graph. */ 
+
+public void BellmanfordpEvaluation (int source,int adj_matrix[][])
+{
+     for(int node=1; node<=numb_vert; node++) 
+
+/*It initializes the distance array for all vertices to MAX_VALUE */
+    distance[node]=MAX_VALUE;
+/*Sets the distance of the source vertex to 0 */    
+distance[source]=0;
+
+/* Within each iteration, it iterates over all edges of the graph represented by the adjacency matrix */
+for(int node=1;node<=numb_vert-1; node++)   // number of iterations
+{
+    for(int src_node=1;src_node<=numb_vert;src_node++)
+{
+     for(int dest_node=1;dest_node<=numb_vert;dest_node++)
+{
+      if(adj_matrix[src_node][dest_node]!=MAX_VALUE)
+          {
+        if(distance[dest_node] > distance[src_node] + adj_matrix[src_node][dest_node])
+         distance[dest_node] = distance[src_node] + adj_matrix[src_node][dest_node];
+               }
+        }  
+      }
+}
+
+/* Negative Cycle Detection:*/
+for(int src_node=1;src_node<=numb_vert;src_node++)
+{
+    for(int dest_node=1;dest_node<=numb_vert;dest_node++)
+{
+         if(adj_matrix[src_node][dest_node]!=MAX_VALUE)
+{
+     if(distance[dest_node] > distance[src_node] +adj_matrix[src_node][dest_node])
+       {
+             System.out.println("The graph contains negative edge cycle");
+        }
+
+      }
+   }
+}
+
+/* it prints the routing table for the source router, displaying the shortest distance from the source to each destination vertex.*/
+System.out.println("Routing Table for Router " + source+" is");
+System.out.println("Destination Distance\t");
+for(int vertex=1;vertex<=numb_vert;vertex++) 
+System.out.println(+vertex+"\t\t\t"+distance[vertex]);
+}
+
+
+public static void main(String args[])
+{
+      int numb_vert=0;
+      int source;
+Scanner scan = new Scanner(System.in);   
+/*Reads the number of vertices from the standard input using a Scanner.*/
+System.out.println("Enter the number of vertices"); 
+numb_vert = scan.nextInt();
+
+/* Creates an adjacency matrix*/ 
+int adj_matrix[][] = new int[numb_vert+1][numb_vert+1]; 
+System.out.println("Enter the adjacency matrix");
+for(int src_node=1;src_node<=numb_vert;src_node++)
+for(int dest_node=1;dest_node<=numb_vert;dest_node++)
+{
+     adj_matrix[src_node][dest_node] = scan.nextInt();
+/* If the diagonal elements (where source node equals destination node) are encountered, they are set to 0.*/ 
+    if(src_node==dest_node)
+{
+      adj_matrix[src_node][dest_node]=0;
+      continue;
+}
+
+/* If any element is 0 (indicating no direct edge), it's set to MAX_VALUE, indicating an infinite distance. */ 
+if(adj_matrix[src_node][dest_node]==0) 
+adj_matrix[src_node][dest_node]=MAX_VALUE;
+}   // end of for loop
+
+for(int i=1;i<=numb_vert;i++)
+{
+    /* For each vertex, creates an instance of the bellmanford class and runs the BellmanfordpEvaluation method */ 
+    bellmanford bellmanford = new bellmanford(numb_vert); 
+    bellmanford.BellmanfordpEvaluation(i,adj_matrix);
+}
+scan.close();  //Closes the Scanner to release system resources.
+}
+}
